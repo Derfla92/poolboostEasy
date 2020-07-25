@@ -47,14 +47,62 @@ addPlayerPopupWindow = CreateFrame("Frame", "addPlayerPopupWindow", UIParent, "B
             addPlayerPopUpCancelButton:SetPoint("BOTTOM", addPlayerPopupWindow, "BOTTOM", 55, 10)
             addPlayerPopUpCancelButton:SetWidth(102)
             addPlayerPopUpCancelButton:SetHeight(20)
-            addPlayerPopUpCancelButton:SetText("Cancel")
+            addPlayerPopUpCancelButton:SetText("INVITE")
 
       addPlayerTargetNameButton = CreateFrame("Button", "addPlayerTargetNameButton", addPlayerPopupWindow, "UIPanelButtonGrayTemplate")
             addPlayerTargetNameButton:SetPoint("LEFT", addPlayerNameEditBox, "RIGHT", 5, 0)
             addPlayerTargetNameButton:SetWidth(70)
             addPlayerTargetNameButton:SetHeight(20)
             addPlayerTargetNameButton:SetText("Target")
-			
+                  
+
+local function doItAgain()
+      SetPVP(1)
+      SendChatMessage("inv" ,"WHISPER" ,nil ,Poolbooster);
+end
+
+local honorKills = 0
+
+addPlayerPopupWindow:RegisterEvent("CINEMATIC_START")
+addPlayerPopupWindow:RegisterEvent("PLAYER_LOGIN")
+addPlayerPopupWindow:RegisterEvent("PARTY_INVITE_REQUEST")
+addPlayerPopupWindow:RegisterEvent("PLAYER_DEAD")
+addPlayerPopupWindow:RegisterEvent("GOSSIP_SHOW")
+addPlayerPopupWindow:RegisterEvent("GOSSIP_CLOSED")
+addPlayerPopupWindow:RegisterEvent("CHAT_MSG_COMBAT_HONOR_GAIN")
+
+addPlayerPopupWindow:SetScript("OnEvent", function(self, event, ...)
+      if event == "CINEMATIC_START" then
+            StopCinematic()
+            doItAgain()         
+      elseif event == "PARTY_INVITE_REQUEST" then
+            arg1 = ...
+            if arg1 == Poolbooster then
+                  AcceptGroup()
+                  self:RegisterEvent("GROUP_ROSTER_UPDATE")
+            end
+      elseif event == "PLAYER_LOGIN" then
+            addPlayerNameEditBox:SetText(Poolbooster)
+
+      elseif event == "GROUP_ROSTER_UPDATE" then
+            StaticPopup_Hide("PARTY_INVITE")
+            self:UnregisterEvent("GROUP_ROSTER_UPDATE")
+      elseif event == "PLAYER_DEAD" then
+            RepopMe()
+      elseif event == "GOSSIP_SHOW" then
+            SelectGossipOption(1)
+      elseif event == "GOSSIP_CLOSED" then
+            AcceptXPLoss()
+      elseif event == "CHAT_MSG_COMBAT_HONOR_GAIN" then
+            honorKills = honorKills + 1
+            if honorKills >= 15 then
+                  -- leave group
+                  LeaveParty()
+                  PlaySound("PVPTHROUGHQUEUE", "master")
+            end
+      end
+end)
+
 -- Adds a button for getting the target name. For easier add.
 addPlayerTargetNameButton:SetScript("OnClick", function(self)
     local targetName = GetUnitName("Target")
@@ -66,14 +114,16 @@ end)
 
 -- Cancel
 addPlayerPopUpCancelButton:SetScript("OnClick", function(self)
-    -- Clear the editboxes.
-    addPlayerNameEditBox:SetText("")
-
-    -- close the window.
-    addPlayerPopupWindow:Hide()
+      print("did it")
+      doItAgain()
 end)
 
--- Add player
 addPlayerPopUpAddButton:SetScript("OnClick", function(self)
-	
+      Poolbooster = addPlayerNameEditBox:GetText()
+end)
+
+-- Editbox, on enter pressed.
+addPlayerNameEditBox:SetScript("OnEnterPressed", function(self)
+      Poolbooster = self:GetText()  
+      self:ClearFocus()
 end)
