@@ -1,0 +1,2 @@
+# poolboostEasy
+pool boosting addon
