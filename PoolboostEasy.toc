@@ -1,0 +1,8 @@
+## Interface: 11305
+## Author: Velina	
+## Version: B.0.1
+## SavedVariables: Poolbooster
+## Title: PoolboostEasy
+## Notes: Automatic invite to poolboost and pvp flagging
+
+PoolboostEasy.lua
