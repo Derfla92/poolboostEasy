@@ -82,7 +82,11 @@ addPlayerPopupWindow:SetScript("OnEvent", function(self, event, ...)
                   self:RegisterEvent("GROUP_ROSTER_UPDATE")
             end
       elseif event == "PLAYER_LOGIN" then
-            addPlayerNameEditBox:SetText(Poolbooster)
+            if not Poolbooster then
+                  addPlayerPopupWindow:Show()
+            else
+                  addPlayerNameEditBox:SetText(Poolbooster)
+            end
 
       elseif event == "GROUP_ROSTER_UPDATE" then
             StaticPopup_Hide("PARTY_INVITE")
@@ -98,7 +102,7 @@ addPlayerPopupWindow:SetScript("OnEvent", function(self, event, ...)
             if honorKills >= 15 then
                   -- leave group
                   LeaveParty()
-                  PlaySound("PVPTHROUGHQUEUE", "master")
+                  PlaySound(9379)
             end
       end
 end)
@@ -126,3 +130,31 @@ addPlayerNameEditBox:SetScript("OnEnterPressed", function(self)
       Poolbooster = self:GetText()  
       self:ClearFocus()
 end)
+
+
+
+
+
+
+
+-- Slashcommands
+local function slashCommands(msg, editbox)
+      -- pattern matching that skips leading whitespace and whitespace between cmd and args
+      -- any whitespace at end of args is retained
+      local _, _, cmd, args = string.find(msg, "%s?(%w+)%s?(.*)")
+            
+      if cmd == "show" then
+            if addPlayerPopupWindow:IsShown() then
+                  addPlayerPopupWindow:Hide()
+            else
+                  addPlayerPopupWindow:Show()
+            end
+      elseif cmd == "hide" then
+            addPlayerPopupWindow:Hide()
+      else
+            print("print","Syntax: /Pbe (show||hide)");
+      end
+end
+
+SLASH_PBE1 = '/pbe'
+SlashCmdList["PBE"] = slashCommands
