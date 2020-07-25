@@ -114,7 +114,6 @@ end)
 
 -- Cancel
 addPlayerPopUpCancelButton:SetScript("OnClick", function(self)
-      print("did it")
       doItAgain()
 end)
 
