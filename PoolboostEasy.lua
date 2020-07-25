@@ -8,6 +8,7 @@ addPlayerPopupWindow = CreateFrame("Frame", "addPlayerPopupWindow", UIParent, "B
       addPlayerPopupWindow:RegisterForDrag("LeftButton")
       addPlayerPopupWindow:SetScript("OnDragStart", addPlayerPopupWindow.StartMoving)
       addPlayerPopupWindow:SetScript("OnDragStop", addPlayerPopupWindow.StopMovingOrSizing)
+      addPlayerPopupWindow:Hide()
 
       addPlayerPopupWindow.title = addPlayerPopupWindow:CreateFontString(nil, "Overlay")
             addPlayerPopupWindow.title:SetFontObject("GameFontHighlight")
@@ -102,7 +103,7 @@ addPlayerPopupWindow:SetScript("OnEvent", function(self, event, ...)
             if honorKills >= 15 then
                   -- leave group
                   LeaveParty()
-                  PlaySound(9379)
+                  PlaySound(8960, true)
             end
       end
 end)
